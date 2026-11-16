@@ -43,3 +43,29 @@ class ImageGraph:
                             self.adj[node].append((ny, nx))
 
         return self.adj
+
+    def find_connected_components(self):
+        if not self.adj:
+            self.build_graph()
+
+        visited = set()
+        components = []
+
+        for start_node in self.adj:
+            if start_node not in visited:
+                component = []
+                stack = [start_node]
+                visited.add(start_node)
+
+                while stack:
+                    curr = stack.pop()
+                    component.append(curr)
+
+                    for neighbor in self.adj[curr]:
+                        if neighbor not in visited:
+                            visited.add(neighbor)
+                            stack.append(neighbor)
+
+                components.append(component)
+            
+        return components
