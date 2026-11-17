@@ -8,7 +8,7 @@ class RegionApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Color Region Detector")
-        self.root.geometry("700x500")
+        self.root.geometry("800x730")
 
         self.image_path = None
         self.tk_image = None
@@ -17,7 +17,7 @@ class RegionApp:
         control_frame = tk.Frame(self.root, pady = 10)
         control_frame.grid(row = 0, column = 0)
 
-        self.load_button = tk.Button(control_frame, text = "Load image", width = 15, font = ("Courier", 11, "bold"))
+        self.load_button = tk.Button(control_frame, text = "Load image", width = 15, font = ("Courier", 11, "bold"), command = self.load_image)
         self.load_button.grid(row = 0, column = 1, padx = 10)
 
         self.detect_button = tk.Button(control_frame, text = "Detect region", width = 15, state = tk.DISABLED, font = ("Courier", 11, "bold"))
@@ -26,5 +26,28 @@ class RegionApp:
         self.result_label = tk.Label(control_frame, text = "Regions found: -", font = ("Courier", 11, "bold"))
         self.result_label.grid(row = 0, column = 3, padx = 20)
 
-        self.canvas = tk.Canvas(self.root, bg="#f0f0f0", width = 750, height = 560)
+        self.canvas = tk.Canvas(self.root, bg="#f0f0f0", width = 780, height = 650)
         self.canvas.grid(row = 1, column = 0, pady = 10)
+
+    def load_image(self):
+        path = filedialog.askopenfilename(
+            initialdir = "data",
+            title = "Select an image",
+            filetypes = [("Image files", "*.png *.jpg *.jpeg *.bmp")],
+        )
+        if not path:
+            return
+
+        self.image_path = path
+        self.graph = ImageGraph(path)
+
+        with Image.open(path) as img:
+            display_img = img.copy()
+            display_img.thumbnail((720, 530))
+            self.tk_image = ImageTk.PhotoImage(display_img)
+
+        self.canvas.delete("all")
+        self.canvas.create_image(390, 325, image = self.tk_image, anchor = tk.CENTER)
+
+        self.detect_button.config(state=tk.NORMAL)
+        self.result_label.config(text = "Regions found: -", font = ("Courier", 11, "bold"))
