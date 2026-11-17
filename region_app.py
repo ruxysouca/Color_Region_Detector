@@ -20,7 +20,7 @@ class RegionApp:
         self.load_button = tk.Button(control_frame, text = "Load image", width = 15, font = ("Courier", 11, "bold"), command = self.load_image)
         self.load_button.grid(row = 0, column = 1, padx = 10)
 
-        self.detect_button = tk.Button(control_frame, text = "Detect region", width = 15, state = tk.DISABLED, font = ("Courier", 11, "bold"))
+        self.detect_button = tk.Button(control_frame, text = "Detect region", width = 15, state = tk.DISABLED, font = ("Courier", 11, "bold"), command = self.detect_regions)
         self.detect_button.grid(row = 0, column = 2, padx = 5)
 
         self.result_label = tk.Label(control_frame, text = "Regions found: -", font = ("Courier", 11, "bold"))
@@ -51,3 +51,17 @@ class RegionApp:
 
         self.detect_button.config(state=tk.NORMAL)
         self.result_label.config(text = "Regions found: -", font = ("Courier", 11, "bold"))
+
+    def detect_regions(self):
+        if not self.graph:
+            return
+
+        self.result_label.config(text = "Processing...")
+        self.root.update_idletasks()
+
+        self.graph.load_image_to_matrix()
+        self.graph.build_graph()
+        components = self.graph.find_connected_components()
+
+        total_regions = len(components)
+        self.result_label.config(text =  f"Regions found: {total_regions}")
