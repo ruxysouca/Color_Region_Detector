@@ -23,7 +23,7 @@ class RegionApp:
         self.detect_button = tk.Button(control_frame, text = "Detect region", width = 15, state = tk.DISABLED, font = ("Courier", 11, "bold"), command = self.detect_regions)
         self.detect_button.grid(row = 0, column = 2, padx = 5)
 
-        self.result_label = tk.Label(control_frame, text = "Regions found: -", font = ("Courier", 11, "bold"))
+        self.result_label = tk.Label(control_frame, text = "Raw regions: -\nPerceived: -", font = ("Courier", 11, "bold"), justify = tk.LEFT)
         self.result_label.grid(row = 0, column = 3, padx = 20)
 
         self.canvas = tk.Canvas(self.root, bg="white", width = 540, height = 500)
@@ -49,7 +49,7 @@ class RegionApp:
         self.canvas.create_image(270, 250, image = self.tk_image, anchor = tk.CENTER)
 
         self.detect_button.config(state=tk.NORMAL)
-        self.result_label.config(text = "Regions found: -", font = ("Courier", 11, "bold"))
+        self.result_label.config(text = "Raw regions: -\nPerceived: -", font = ("Courier", 11, "bold"))
 
     def detect_regions(self):
         if not self.graph:
@@ -62,5 +62,8 @@ class RegionApp:
         self.graph.build_graph()
         components = self.graph.find_connected_components()
 
+        perceived = self.graph.find_perceived_regions()
         total_regions = len(components)
-        self.result_label.config(text =  f"Regions found: {total_regions}")
+        perceived_regions = len(perceived)
+
+        self.result_label.config(text =  f"Raw regions: {total_regions}\nPerceived: {perceived_regions}")
