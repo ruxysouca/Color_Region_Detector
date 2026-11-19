@@ -94,3 +94,35 @@ class ImageGraph:
                     cleaned[x][y] = min(neighbors, key = lambda n: self.color_distance(curr, n))
 
         return cleaned
+
+    def find_perceived_regions(self, color_tolerance = 45):
+        matrix = self.clean_boundary_pixels()
+        visited = set()
+        regions = []
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+        for x in range(self.height):
+            for y in range(self.width):
+                start_node = (x, y)
+                if start_node not in visited:
+                    seed_color = matrix[x][y]
+                    region = []
+                    stack = [start_node]
+                    visited.add(start_node)
+
+                    while stack:
+                        cx, cy = stack.pop()
+                        region.append((cx, cy))
+
+                        for dx, dy in directions:
+                            nx, ny = cx + dx, cy + dy
+                            if 0 <= nx < self.height and 0 <= ny < self.width:
+                                if (nx, ny) not in visited:
+                                    neighbor_color = matrix[nx][ny]
+                                    if self.color_distance(neighbor_color, seed_color) <= color_tolerance:
+                                        visited.add((nx, ny))
+                                        stack.append((nx, ny))
+
+                    regions.append(region)
+
+        return regions
