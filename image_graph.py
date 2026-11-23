@@ -95,7 +95,7 @@ class ImageGraph:
 
         return cleaned
 
-    def find_perceived_regions(self, color_tolerance = 45):
+    def find_perceived_regions(self, color_tolerance = 45, min_pixels = 20):
         matrix = self.clean_boundary_pixels()
         visited = set()
         regions = []
@@ -125,4 +125,4 @@ class ImageGraph:
 
                     regions.append(region)
 
-        return regions
+        return [r for r in regions if len(r) >= min_pixels]
